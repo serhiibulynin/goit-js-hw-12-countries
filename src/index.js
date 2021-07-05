@@ -11,7 +11,7 @@ import '@pnotify/core/dist/BrightTheme.css';
 
 defaultModules.set(PNotifyMobile, {});
 
-const debounce = require('lodash.debounce');
+import debounce from 'lodash.debounce';
 
 const inputRef = document.querySelector('[name="country"]');
 const resultRef = document.querySelector("#result");
@@ -23,11 +23,17 @@ function onInputCountry(e) {
     e.preventDefault();
     const country = e.target.value;
 
+    resultRef.innerHTML = "";
+    errorRef.innerHTML = "";
+    if (!country) {
+        return false;
+    }
+
     fetchCountries(country).then(data => {
-        if (data.length > 1 && data.length<=10) {
+        if (data.length > 1 && data.length <= 10) {
             resultRef.innerHTML = countriesTpl(data);
         }
-        if (data.length === 1) { 
+        if (data.length === 1) {
             resultRef.innerHTML = countryTpl(data);
         }
         if (data.length > 10) {
@@ -36,13 +42,15 @@ function onInputCountry(e) {
             })
             resultRef.innerHTML = "";
         }
-        if (data.status === 404) {
-            error({
-                text: 'Country not founded!'
-            })
-        }
-    })
+        
+    }).catch(error=>handleError(error));
 }
+
+function handleError(error) {
+  errorRef.textContent = error;
+  resultRef.innerHTML = "";
+}
+
 
 
 

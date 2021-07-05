@@ -2,12 +2,14 @@ const URL = 'https://restcountries.eu/rest/v2/name/'
 
 function fetchCountries(path = '/') {
     return fetch(URL+path)
-        .then(response => response.json()).then((data) => {
-      if (data.error) {
-        return Promise.reject(error);
-      }
-      return data;
-    });
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        }
+        throw new Error("Error fetching data")
+      });
 }
+
+
 
 export { fetchCountries}
